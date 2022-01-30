@@ -8,11 +8,13 @@ import {
   Button,
   ScrollView,
   FlatList,
+  Modal,
 } from "react-native";
 
 export default function App() {
   const [enteredGoal, setEnteredGoal] = useState("");
   const [goalItems, setGoalItems] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   const goalInputHandler = (enteredText) => {
     setEnteredGoal(enteredText);
@@ -20,11 +22,17 @@ export default function App() {
 
   const handleGoal = () => {
     setGoalItems([...goalItems, enteredGoal]);
+    setEnteredGoal("");
+  };
+
+  const remooveModal = () => {
+    setShowModal(true);
   };
 
   const remobeGoal = (goalItem) => {
     const fillteredItem = goalItems.filter((item) => item !== goalItem);
     setGoalItems(fillteredItem);
+    setShowModal(false);
   };
 
   return (
@@ -42,9 +50,24 @@ export default function App() {
       <FlatList
         data={goalItems}
         renderItem={(item) => (
-          <Text onPress={() => remobeGoal(item)} style={styles.textCard}>
-            {item.item}
-          </Text>
+          <View>
+            <Text onPress={remooveModal} style={styles.textCard}>
+              {item.item}
+            </Text>
+            <Modal visible={showModal}>
+              <View>
+                <Text onPress={() => setShowModal(false)}>
+                  Are you sure you wanna delete {item.item}
+                </Text>
+                <View>
+                  <Button
+                    title="Delete"
+                    onPress={() => remobeGoal(item.item)}
+                  />
+                </View>
+              </View>
+            </Modal>
+          </View>
         )}
       />
     </View>
